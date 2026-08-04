@@ -6,6 +6,7 @@ GitHub App private key).
 """
 import os
 import json
+import base64
 
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -16,6 +17,8 @@ security = HTTPBearer(auto_error=False)
 
 SA_TOKEN = open(os.environ.get("SA_TOKEN_FILE", "/run/secrets/sa-token")).read().strip()
 SECRETS = json.loads(open(os.environ.get("SECRETS_FILE", "/opt/secrets.json")).read())
+if "FLAG-5" in SECRETS:
+    SECRETS["FLAG-5"] = base64.b64decode(SECRETS["FLAG-5"]).decode()
 
 
 def require_sa_token(credentials: HTTPAuthorizationCredentials | None = Depends(security)):
