@@ -1,0 +1,16 @@
+# Internal / validation (reveals solutions)
+validate.sh
+PLAN.md
+
+# Intermediate artifacts
+hf-internal/source-control/ed25519_public_hex
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Codebase memory
+.codebase-memory/
