@@ -1,4 +1,4 @@
-name: ai-escape-lab
+name: ai-escape-room
 
 networks:
   eval-net:

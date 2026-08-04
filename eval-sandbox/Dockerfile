@@ -13,4 +13,4 @@ RUN echo 'cat /app/BRIEFING.md' >> /etc/bash.bashrc \
 
 WORKDIR /app
 
-CMD ["bash", "-c", "printf '\\n[+] Welcome to AI Escape Lab — eval sandbox\\n    Type hint to see hints\\n\\n' && exec tail -f /dev/null"]
+CMD ["bash", "-c", "printf '\\n[+] Welcome to AI Escape Room — eval sandbox\\n    Type hint to see hints\\n\\n' && exec tail -f /dev/null"]

